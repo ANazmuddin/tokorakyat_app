@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "537339717848",
+    "project_id": "oko-rakyat-db",
+    "storage_bucket": "oko-rakyat-db.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:537339717848:android:b60249d8c5a7cb999e4fad",
+        "android_client_info": {
+          "package_name": "com.example.toko_rakyat"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyChCS0uoY7h5YMM6qlT4R8apvG8ZwUkaig"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
