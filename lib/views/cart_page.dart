@@ -10,7 +10,10 @@ class CartPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA),
       appBar: AppBar(
-        title: const Text("Keranjang Saya", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+        title: const Text(
+            "Keranjang Saya",
+            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)
+        ),
         backgroundColor: Colors.white,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.black),
@@ -18,13 +21,13 @@ class CartPage extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.delete_outline, color: Colors.red),
             onPressed: () {
-              // Tombol hapus semua (opsional)
+              // Tombol hapus semua barang
               context.read<CartController>().clearCart();
             },
           )
         ],
       ),
-      // Menggunakan Consumer agar halaman ini selalu update jika ada barang masuk/keluar
+      // Menggunakan Consumer agar halaman selalu update real-time
       body: Consumer<CartController>(
         builder: (context, controller, child) {
           // KONDISI 1: Jika Keranjang Kosong
@@ -49,7 +52,7 @@ class CartPage extends StatelessWidget {
           // KONDISI 2: Jika Ada Barang
           return Column(
             children: [
-              // DAFTAR BARANG
+              // --- DAFTAR BARANG (LIST) ---
               Expanded(
                 child: ListView.builder(
                   itemCount: controller.items.length,
@@ -62,14 +65,20 @@ class CartPage extends StatelessWidget {
                         contentPadding: const EdgeInsets.all(10),
                         leading: ClipRRect(
                           borderRadius: BorderRadius.circular(10),
-                          child: Image.network(produk.image, width: 60, height: 60, fit: BoxFit.cover),
+                          child: Image.network(
+                            produk.image,
+                            width: 60,
+                            height: 60,
+                            fit: BoxFit.cover,
+                            errorBuilder: (ctx, err, stack) => Container(width: 60, height: 60, color: Colors.grey[300]),
+                          ),
                         ),
                         title: Text(produk.name, style: const TextStyle(fontWeight: FontWeight.bold)),
                         subtitle: Text(produk.price, style: TextStyle(color: Colors.blue[800])),
                         trailing: IconButton(
                           icon: const Icon(Icons.remove_circle_outline, color: Colors.red),
                           onPressed: () {
-                            // Hapus barang spesifik
+                            // Hapus satu barang saja
                             controller.removeItem(produk);
                           },
                         ),
@@ -79,7 +88,7 @@ class CartPage extends StatelessWidget {
                 ),
               ),
 
-              // BAGIAN BAWAH (TOTAL HARGA & CHECKOUT)
+              // --- BAGIAN BAWAH (TOTAL & CHECKOUT) ---
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: const BoxDecoration(
@@ -89,17 +98,20 @@ class CartPage extends StatelessWidget {
                 ),
                 child: Column(
                   children: [
+                    // Tampilan Total Harga
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         const Text("Total Harga", style: TextStyle(fontSize: 16, color: Colors.grey)),
                         Text(
-                          controller.totalPrice, // Mengambil total dari Controller
+                          controller.totalPrice, // Ambil total hitungan dari Controller
                           style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),
                     const SizedBox(height: 20),
+
+                    // TOMBOL CHECKOUT YANG SUDAH DIPERBARUI
                     SizedBox(
                       width: double.infinity,
                       height: 50,
@@ -108,11 +120,43 @@ class CartPage extends StatelessWidget {
                           backgroundColor: Colors.black,
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                         ),
-                        onPressed: () {
-                          // Nanti disambungkan ke Payment Gateway / Firebase
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text("Fitur Checkout akan segera hadir!")),
-                          );
+                        onPressed: () async {
+                          try {
+                            // 1. Beri Feedback Visual (Loading)
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("Sedang memproses pesanan..."),
+                                duration: Duration(seconds: 1),
+                              ),
+                            );
+
+                            // 2. Panggil Fungsi Checkout ke Firebase
+                            await context.read<CartController>().checkout(context);
+
+                            // 3. Tampilkan Dialog Sukses
+                            if (context.mounted) {
+                              showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: const Text("Berhasil!"),
+                                  content: const Text("Pesanan Anda telah diterima dan tersimpan di database."),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(context),
+                                      child: const Text("OK"),
+                                    )
+                                  ],
+                                ),
+                              );
+                            }
+                          } catch (e) {
+                            // 4. Tangani Error (Misal belum login)
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text("Gagal: $e"), backgroundColor: Colors.red),
+                              );
+                            }
+                          }
                         },
                         child: const Text("Checkout Sekarang", style: TextStyle(color: Colors.white, fontSize: 16)),
                       ),
