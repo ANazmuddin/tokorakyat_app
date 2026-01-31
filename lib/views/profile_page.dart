@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:toko_rakyat/controllers/auth_controller.dart';
-import 'package:toko_rakyat/views/history_page.dart'; // Wajib import halaman history
+import 'package:toko_rakyat/views/history_page.dart';
 import 'package:toko_rakyat/views/login_page.dart';
 
 class ProfilePage extends StatelessWidget {
