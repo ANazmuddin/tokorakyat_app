@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart'; // Wajib import Provider
-import 'package:toko_rakyat/controllers/auth_controller.dart'; // Import Auth Controller
-import 'package:toko_rakyat/views/home_page.dart'; // Import Home
-import 'package:toko_rakyat/views/register_page.dart'; // Import Register
+import 'package:provider/provider.dart';
+import 'package:toko_rakyat/controllers/auth_controller.dart';
+import 'package:toko_rakyat/views/main_page.dart';
+import 'package:toko_rakyat/views/register_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -12,19 +12,13 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  // Controller untuk mengambil teks inputan user
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-
-  // Key untuk validasi form
   final _formKey = GlobalKey<FormState>();
-
-  // Status loading agar tombol tidak diklik 2x
   bool _isLoading = false;
 
   @override
   void dispose() {
-    // Bersihkan memori saat halaman ditutup
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
@@ -40,12 +34,12 @@ class _LoginPageState extends State<LoginPage> {
           child: Center(
             child: SingleChildScrollView(
               child: Form(
-                key: _formKey, // Pasang kunci validasi
+                key: _formKey,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // --- BAGIAN HEADER (LOGO & JUDUL) ---
+                    // LOGO & JUDUL
                     const Icon(Icons.storefront, size: 80, color: Colors.blue),
                     const SizedBox(height: 20),
                     const Text(
@@ -58,7 +52,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     const SizedBox(height: 40),
 
-                    // --- INPUT EMAIL ---
+                    // INPUT EMAIL
                     TextFormField(
                       controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
@@ -66,141 +60,96 @@ class _LoginPageState extends State<LoginPage> {
                         labelText: "Email",
                         hintText: "Contoh: ahmad@gmail.com",
                         prefixIcon: const Icon(Icons.email_outlined),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15),
-                        ),
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
                       ),
-                      // Validasi Email
                       validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Email tidak boleh kosong';
-                        }
-                        if (!value.contains('@')) {
-                          return 'Format email tidak valid';
-                        }
+                        if (value == null || value.isEmpty) return 'Email wajib diisi';
+                        if (!value.contains('@')) return 'Format email salah';
                         return null;
                       },
                     ),
                     const SizedBox(height: 20),
 
-                    // --- INPUT PASSWORD ---
+                    // INPUT PASSWORD
                     TextFormField(
                       controller: _passwordController,
-                      obscureText: true, // Sembunyikan karakter password
+                      obscureText: true,
                       decoration: InputDecoration(
                         labelText: "Password",
                         prefixIcon: const Icon(Icons.lock_outline),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15),
-                        ),
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
                       ),
-                      // Validasi Password
                       validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Password tidak boleh kosong';
-                        }
-                        if (value.length < 6) {
-                          return 'Password minimal 6 karakter';
-                        }
+                        if (value == null || value.length < 6) return 'Minimal 6 karakter';
                         return null;
                       },
                     ),
 
-                    // Tombol Lupa Password (Hanya Hiasan Dulu)
+                    // LUPA PASSWORD (HIASAN)
                     Align(
                       alignment: Alignment.centerRight,
-                      child: TextButton(
-                        onPressed: () {},
-                        child: const Text("Lupa Password?"),
-                      ),
+                      child: TextButton(onPressed: () {}, child: const Text("Lupa Password?")),
                     ),
                     const SizedBox(height: 20),
 
-                    // --- TOMBOL LOGIN UTAMA ---
+                    // TOMBOL LOGIN
                     SizedBox(
                       width: double.infinity,
                       height: 55,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.black,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15),
-                          ),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                         ),
-                        // Jika sedang loading, tombol mati (null)
                         onPressed: _isLoading ? null : () async {
-                          // 1. Cek Validasi Form
                           if (_formKey.currentState!.validate()) {
-
-                            // 2. Set Loading Aktif
-                            setState(() {
-                              _isLoading = true;
-                            });
-
+                            setState(() => _isLoading = true);
                             try {
-                              // 3. Panggil Fungsi Login dari AuthController
+                              // PROSES LOGIN
                               await context.read<AuthController>().login(
-                                _emailController.text.trim(), // trim() hapus spasi di ujung
+                                _emailController.text.trim(),
                                 _passwordController.text.trim(),
                               );
 
-                              // 4. Jika Berhasil, Pindah ke Home
+                              // JIKA SUKSES -> KE MAIN PAGE (Menu Bawah)
                               if (mounted) {
                                 Navigator.pushReplacement(
                                   context,
-                                  MaterialPageRoute(builder: (context) => HomePage()),
+                                  MaterialPageRoute(builder: (context) => const MainPage()),
                                 );
                               }
-
                             } catch (e) {
-                              // 5. Jika Gagal, Tampilkan Pesan Error
+                              // JIKA GAGAL
                               if (mounted) {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text("Login Gagal: $e"),
-                                    backgroundColor: Colors.red,
-                                    behavior: SnackBarBehavior.floating,
-                                  ),
+                                  SnackBar(content: Text("Error: $e"), backgroundColor: Colors.red),
                                 );
                               }
                             } finally {
-                              // 6. Matikan Loading (Apapun yang terjadi)
-                              if (mounted) {
-                                setState(() {
-                                  _isLoading = false;
-                                });
-                              }
+                              if (mounted) setState(() => _isLoading = false);
                             }
                           }
                         },
-                        // Ubah tampilan tombol saat loading
                         child: _isLoading
                             ? const CircularProgressIndicator(color: Colors.white)
-                            : const Text(
-                          "Masuk Sekarang",
-                          style: TextStyle(color: Colors.white, fontSize: 18),
-                        ),
+                            : const Text("Masuk Sekarang", style: TextStyle(color: Colors.white, fontSize: 18)),
                       ),
                     ),
                     const SizedBox(height: 20),
 
-                    // --- TOMBOL REGISTER ---
+                    // LINK KE REGISTER
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const Text("Belum punya akun?"),
                         TextButton(
                           onPressed: () {
-                            // Navigasi ke Halaman Register
                             Navigator.push(
                               context,
                               MaterialPageRoute(builder: (context) => const RegisterPage()),
                             );
                           },
-                          child: const Text(
-                            "Daftar Disini",
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
+                          child: const Text("Daftar Disini", style: TextStyle(fontWeight: FontWeight.bold)),
                         ),
                       ],
                     ),

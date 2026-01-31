@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:toko_rakyat/controllers/auth_controller.dart';
-import 'package:toko_rakyat/views/home_page.dart';
+import 'package:toko_rakyat/views/main_page.dart'; 
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -14,13 +14,24 @@ class _RegisterPageState extends State<RegisterPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  bool _isLoading = false; // Untuk efek loading muter-muter
+  bool _isLoading = false;
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(backgroundColor: Colors.white, elevation: 0, iconTheme: const IconThemeData(color: Colors.black)),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        iconTheme: const IconThemeData(color: Colors.black),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(25.0),
         child: SingleChildScrollView(
@@ -33,17 +44,20 @@ class _RegisterPageState extends State<RegisterPage> {
                 const Text("Daftar sekarang untuk mulai belanja", style: TextStyle(fontSize: 16, color: Colors.grey)),
                 const SizedBox(height: 30),
 
+                // INPUT EMAIL
                 TextFormField(
                   controller: _emailController,
+                  keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
                     labelText: "Email",
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
                     prefixIcon: const Icon(Icons.email_outlined),
                   ),
-                  validator: (val) => val!.contains('@') ? null : "Email tidak valid",
+                  validator: (val) => val != null && val.contains('@') ? null : "Email tidak valid",
                 ),
                 const SizedBox(height: 20),
 
+                // INPUT PASSWORD
                 TextFormField(
                   controller: _passwordController,
                   obscureText: true,
@@ -52,10 +66,11 @@ class _RegisterPageState extends State<RegisterPage> {
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
                     prefixIcon: const Icon(Icons.lock_outline),
                   ),
-                  validator: (val) => val!.length < 6 ? "Minimal 6 karakter" : null,
+                  validator: (val) => val != null && val.length < 6 ? "Minimal 6 karakter" : null,
                 ),
                 const SizedBox(height: 30),
 
+                // TOMBOL DAFTAR
                 SizedBox(
                   width: double.infinity,
                   height: 55,
@@ -66,23 +81,30 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                     onPressed: _isLoading ? null : () async {
                       if (_formKey.currentState!.validate()) {
-                        setState(() => _isLoading = true); // Mulai loading
+                        setState(() => _isLoading = true);
                         try {
-                          // Panggil fungsi REGISTER di Controller
+                          // PROSES REGISTER
                           await context.read<AuthController>().register(
-                            _emailController.text,
-                            _passwordController.text,
+                            _emailController.text.trim(),
+                            _passwordController.text.trim(),
                           );
 
-                          // Jika sukses, langsung masuk ke Home
+                          // JIKA SUKSES -> KE MAIN PAGE (Menu Bawah)
                           if (mounted) {
-                            Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomePage()));
+                            Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(builder: (_) => const MainPage())
+                            );
                           }
                         } catch (e) {
-                          // Jika gagal, munculkan pesan error
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString()), backgroundColor: Colors.red));
+                          // JIKA GAGAL
+                          if (mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text("Gagal: $e"), backgroundColor: Colors.red),
+                            );
+                          }
                         } finally {
-                          if (mounted) setState(() => _isLoading = false); // Stop loading
+                          if (mounted) setState(() => _isLoading = false);
                         }
                       }
                     },
