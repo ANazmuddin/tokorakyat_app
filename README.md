@@ -1,20 +1,19 @@
-```markdown
 # Toko Rakyat 🛒
 
-**Toko Rakyat** adalah aplikasi mobile e-commerce sederhana namun *full-stack* yang dibangun menggunakan **Flutter** dan **Firebase**. Aplikasi ini mencakup siklus bisnis lengkap mulai dari autentikasi pengguna, penelusuran produk, manajemen keranjang, hingga riwayat pemesanan.
+**Toko Rakyat** (The People's Store) is a simple yet full-stack mobile e-commerce application built using **Flutter** and **Firebase**. This app covers the complete e-commerce business cycle, ranging from user authentication and product browsing to cart management and order history.
 
-Proyek ini dibuat sebagai demonstrasi kemampuan pengembangan aplikasi Android dengan integrasi backend real-time.
+This project serves as a demonstration of Android application development capabilities with real-time backend integration.
 
-## 📱 Fitur Utama
+## 📱 Key Features
 
-* **Splash Screen & Auto Login:** Pengecekan sesi pengguna otomatis saat aplikasi dibuka.
-* **Autentikasi Pengguna:** Login dan Register menggunakan Email & Password (Firebase Auth).
-* **Katalog Produk Real-time:** Menampilkan data produk langsung dari Cloud Firestore.
-* **Pencarian & Filter:** Cari produk berdasarkan nama dan filter berdasarkan kategori (Sepatu, Outdoor, dll).
-* **Keranjang Belanja (State Management):** Menambah barang dan menghitung total harga secara dinamis.
-* **Checkout System:** Menyimpan pesanan ke database dan mengosongkan keranjang.
-* **Riwayat Pesanan:** Melihat daftar belanjaan yang pernah dilakukan oleh pengguna yang sedang login.
-* **Profil Pengguna:** Menampilkan info user dan fitur Logout.
+* **Splash Screen & Auto Login:** Automatic user session check upon application launch.
+* **User Authentication:** Secure Login and Register using Email & Password (Firebase Auth).
+* **Real-time Product Catalog:** Displays product data directly from Cloud Firestore.
+* **Search & Filter:** Search products by name and filter by specific categories (e.g., Shoes, Outdoor, Accessories).
+* **Shopping Cart (State Management):** Add items and dynamically calculate total prices using Provider.
+* **Checkout System:** Saves orders to the database and automatically clears the cart.
+* **Order History:** View the purchase history for the currently logged-in user.
+* **User Profile:** Displays user information and handles the Logout functionality.
 
 ## 🛠️ Tech Stack
 
@@ -23,113 +22,106 @@ Proyek ini dibuat sebagai demonstrasi kemampuan pengembangan aplikasi Android de
 * **State Management:** Provider
 * **Architecture:** MVC (Model-View-Controller) pattern
 
-## 📋 Prasyarat
+## 📋 Prerequisites
 
-Sebelum menjalankan proyek ini, pastikan komputer Anda sudah terinstal:
+Before running this project, ensure you have the following installed:
 
-1.  **Flutter SDK** (Versi terbaru stabil)
+1.  **Flutter SDK** (Latest Stable Version)
 2.  **Git**
 3.  **Android Studio / VS Code**
-4.  **Akun Google** (Untuk akses Firebase Console)
+4.  **Google Account** (To access Firebase Console)
 
-## 🚀 Cara Menjalankan (Installation)
+## 🚀 Installation & Setup
 
-Ikuti langkah-langkah berikut untuk menjalankan aplikasi di komputer lokal Anda:
+Follow these steps to run the application on your local machine:
 
-### 1. Clone Repository
-```bash
-git clone [https://github.com/ANazmuddin/tokorakyat_app.git]
+### 1. Clone the Repository
+
+git clone https://github.com/ANazmuddin/tokorakyat_app.git
 cd toko_rakyat
 
 ```
 
 ### 2. Install Dependencies
 
-Download semua library yang dibutuhkan (Provider, Firebase, dll):
+Download all required libraries (Provider, Firebase, etc.):
 
 ```bash
 flutter pub get
 
 ```
 
-### 3. Konfigurasi Firebase (Penting!)
+### 3. Configure Firebase (Crucial!)
 
-Karena alasan keamanan, file konfigurasi Firebase tidak disertakan. Anda perlu menghubungkan ke project Firebase Anda sendiri:
+For security reasons, the Firebase configuration file is not included in this repository. You must connect it to your own Firebase project:
 
-1. Buka [Firebase Console](https://console.firebase.google.com/).
-2. Buat project baru (misal: `toko-rakyat-db`).
-3. Aktifkan **Authentication**: Pilih *Sign-in method* -> *Email/Password* -> *Enable*.
-4. Aktifkan **Firestore Database**: Pilih *Create Database* -> *Start in Test Mode*.
-5. Di terminal komputer Anda, jalankan:
+1. Go to the [Firebase Console](https://console.firebase.google.com/).
+2. Create a new project (e.g., `toko-rakyat-db`).
+3. Enable **Authentication**: Select *Sign-in method* -> *Email/Password* -> *Enable*.
+4. Enable **Firestore Database**: Select *Create Database* -> *Start in Test Mode*.
+5. In your project terminal, run:
 ```bash
 flutterfire configure
 
 ```
 
 
-*(Pilih project yang baru Anda buat tadi).*
+*(Select the project you just created).*
 
-### 4. Isi Data Dummy (Seeding Database)
+### 4. Seed the Database
 
-Agar aplikasi tidak kosong, isi data produk di Firestore Database Anda secara manual:
+To populate the app with data, you need to manually add product data to your Firestore Database:
 
-* Buat Collection baru bernama: **`products`**
-* Tambahkan Document dengan field berikut:
-* `name` (string): Contoh "Sepatu Keren"
-* `price` (string): Contoh "Rp 500.000"
-* `category` (string): Contoh "Sepatu" (Pilihan: Sepatu, Outdoor, Aksesoris, Pakaian)
-* `image` (string): URL gambar (bisa pakai link dari Unsplash/Google)
+* Create a new Collection named: **`products`**
+* Add a Document with the following fields:
+* `name` (string): e.g., "Cool Sneakers"
+* `price` (string): e.g., "Rp 500.000"
+* `category` (string): e.g., "Sepatu" (Options: Sepatu, Outdoor, Aksesoris, Pakaian)
+* `image` (string): Image URL (use a link from Unsplash/Google)
 
 
 
-### 5. Jalankan Aplikasi
+### 5. Run the App
 
-Pastikan Emulator Android sudah nyala atau HP fisik tercolok.
+Ensure your Android Emulator is running or a physical device is connected.
 
 ```bash
 flutter run
 
 ```
 
-## 📂 Struktur Folder
+## 📂 Project Structure
 
 ```
 lib/
-├── controllers/      # Logika Bisnis (Cart, Auth, Product)
-├── models/           # Struktur Data (Product Model)
-├── views/            # Tampilan UI (Halaman-halaman)
+├── controllers/      # Business Logic (Cart, Auth, Product)
+├── models/           # Data Structure (Product Model)
+├── views/            # UI Screens
 │   ├── login_page.dart
 │   ├── home_page.dart
 │   ├── cart_page.dart
 │   └── ...
-└── main.dart         # Entry point & Setup Provider
+└── main.dart         # Entry point & Provider Setup
 
 ```
 
-## 🤝 Kontribusi
+## 🤝 Contribution
 
-Jika Anda ingin menambahkan fitur baru atau memperbaiki bug, silakan buat *Pull Request*. Ide pengembangan selanjutnya:
+Contributions are welcome! If you have suggestions for improvements or want to add new features, feel free to open a Pull Request. Future improvement ideas:
 
-* Integrasi Payment Gateway (Midtrans/Xendit).
-* Fitur Edit Profil & Upload Foto.
-* Halaman Admin untuk tambah produk lewat aplikasi.
+* Payment Gateway Integration (Midtrans/Stripe).
+* Profile Editing & Photo Upload.
+* Admin Dashboard for managing products.
 
 ---
 
-Dibuat dengan ❤️ menggunakan Flutter.
+Made with ❤️ using Flutter.
 
 ```
 
 ***
 
-### Tips Tambahan untuk Anda:
-1.  **Upload ke GitHub:** Setelah membuat file ini, sangat disarankan untuk meng-upload seluruh kodingan Anda ke GitHub.
-    * `git init`
-    * `git add .`
-    * `git commit -m "Aplikasi Toko Rakyat Selesai"`
-    * `git push` (ke repository github Anda).
-2.  **Screenshots:** Jika nanti Anda upload ke GitHub, ambil screenshot aplikasi (Halaman Login, Home, Keranjang) lalu tempel di file README agar orang bisa melihat visualnya tanpa harus install dulu.
-
-Selamat! Anda sekarang memiliki portofolio Full Stack Mobile App yang solid. Ada lagi yang bisa saya bantu?
+### Pro Tip for Your Portfolio:
+If you upload this to GitHub, you can also add a section called **"Screenshots"** or **"Demo"** in the README and include a GIF or images of your app running. This drastically increases the chances of recruiters or other developers noticing your work!
 
 ```
