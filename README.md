@@ -37,6 +37,7 @@ Follow these steps to run the application on your local machine:
 
 ### 1. Clone the Repository
 
+```bash
 git clone https://github.com/ANazmuddin/tokorakyat_app.git
 cd toko_rakyat
 
